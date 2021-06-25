@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <h1>SSE test</h1>
+        <p>Yes: <span id="yes" style="color:red">0</span></p>
+        <p>No: <span id="no" style="color:blue">0</span></p>
+
+        <button onclick="yes()">Yes</button>
+        <button onclick="no()">No</button>
+
+        <script>
+            let eventSource = new EventSource('/stream')
+
+            eventSource.onmessage = (e) => {
+                let votes = JSON.parse(e.data)
+
+                document.getElementById('yes').innerText = votes.yes
+                document.getElementById('no').innerText = votes.no
+            }
+
+            function yes() {
+                fetch('/vote', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({vote: 'yes'})
+                });
+            }
+
+            function no() {
+                 fetch('/vote', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({vote: 'no'})
+                });
+            }
+        </script>
+    </body>
+</html>
